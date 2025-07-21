@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="test 14 to deploy to jfrog">
+    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
@@ -248,7 +248,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="10191000" />
+      <workItem from="1753113679820" duration="10760000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -565,7 +565,21 @@
       <option name="project" value="LOCAL" />
       <updated>1753127086937</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="test 15">
+      <created>1753128703262</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1753128703262</updated>
+    </task>
+    <task id="LOCAL-00047" summary="test 16">
+      <created>1753128811902</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1753128811902</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -619,8 +633,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="trying checking in 2 yml files" />
-    <MESSAGE value="testing with branch mapping" />
     <MESSAGE value="updated nexus url" />
     <MESSAGE value="testing cucumber" />
     <MESSAGE value="fixed cucumber reports" />
@@ -644,7 +656,9 @@
     <MESSAGE value="test 12 to deploy to jfrog" />
     <MESSAGE value="test 13 to deploy to jfrog" />
     <MESSAGE value="test 14 to deploy to jfrog" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 14 to deploy to jfrog" />
+    <MESSAGE value="test 15" />
+    <MESSAGE value="test 16" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 16" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">

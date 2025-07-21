@@ -50,7 +50,8 @@ jobs:
           mvn test -q -Pproxy-unit-test
           npm install
           mkdir -p edge/target/unit-test-coverage-html
-          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
+          npx istanbul cover test/unit/*.js --dir=target/unit-test-coverage-html --report html
+#          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
         working-directory: edge
 
       # Apigeelint
@@ -59,7 +60,56 @@ jobs:
           npm install -g apigeelint
           mkdir -p edge/target/apigeelint-report
           apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
-        continue-on-error: true
+#        continue-on-error: true
+
+      - name: Package Reports into Zip
+        run: |
+          mkdir -p edge/target/email-report
+
+          if [ -d edge/target/apigeelint-report ]; then
+            cp -r edge/target/apigeelint-report edge/target/email-report/
+          fi
+
+          if [ -d edge/target/unit-test-coverage-html ]; then
+            cp -r edge/target/unit-test-coverage-html edge/target/email-report/
+          fi
+
+          cd edge/target
+          zip -r combined-report.zip email-report || echo "Zip step skipped due to missing reports"
+
+      - name: Upload ApigeeLint and Code Coverage Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: apigee-lint-and-coverage
+          path: |
+            edge/target/apigeelint-report/
+            edge/target/unit-test-coverage-html/
+            edge/target/combined-report.zip   
+
+      # Step: Send Final Email with Reports
+      - name: Send Final CI Report via Outlook
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.office365.com
+          server_port: 587
+          username: ${{ secrets.OFFICE365_USER }}
+          password: ${{ secrets.OFFICE365_PASS }}
+          subject: "[CI/CD] Apigee & Coverage Reports - ${{ github.ref_name }}"
+          to: smitar@sidgs.com
+          from: ${{ secrets.OFFICE365_USER }}
+          body: |
+            Hello,
+
+            ✅ This is the final CI/CD report for the `${{ github.repository }}` pipeline.
+
+            Attached you will find:
+            - ApigeeLint Report (`apigeelint-report/index.html`)
+            - Code Coverage Report (`unit-test-coverage-html/index.html`)
+
+            Regards,  
+            GitHub Actions
+          attachments: edge/target/combined-report.zip
 
       # Pre-deploy prep
       - name: Pre-deploy Prep
@@ -121,41 +171,45 @@ jobs:
         run: mvn deploy -s ../.m2/cicd-settings.xml
         working-directory: edge
 
-      # Step: Zip both reports
-      - name: Zip ApigeeLint and Coverage Reports
-        if: success()
-        run: |
-          mkdir -p edge/target/email-report
-          cp -r edge/target/apigeelint-report edge/target/email-report/
-          cp -r edge/target/unit-test-coverage-html edge/target/email-report/
-          cd edge/target
-          zip -r combined-report.zip email-report
-        working-directory: .
+#      - name: Package Reports into Zip
+#        run: |
+#          mkdir -p edge/target/email-report
+#
+#          if [ -d edge/target/apigeelint-report ]; then
+#            cp -r edge/target/apigeelint-report edge/target/email-report/
+#          fi
+#
+#          if [ -d edge/target/unit-test-coverage-html ]; then
+#            cp -r edge/target/unit-test-coverage-html edge/target/email-report/
+#          fi
+#
+#          cd edge/target
+#          zip -r combined-report.zip email-report || echo "Zip step skipped due to missing reports"
 
-      # Step: Send Final Email with Reports
-      - name: Send Final CI Report via Outlook
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.office365.com
-          server_port: 587
-          username: ${{ secrets.OFFICE365_USER }}
-          password: ${{ secrets.OFFICE365_PASS }}
-          subject: "[CI/CD] Apigee & Coverage Reports - ${{ github.ref_name }}"
-          to: smitar@sidgs.com
-          from: ${{ secrets.OFFICE365_USER }}
-          body: |
-            Hello,
-
-            ✅ This is the final CI/CD report for the `${{ github.repository }}` pipeline.
-
-            Attached you will find:
-            - ApigeeLint Report (`apigeelint-report/index.html`)
-            - Code Coverage Report (`unit-test-coverage-html/index.html`)
-
-            Regards,  
-            GitHub Actions
-          attachments: edge/target/combined-report.zip
+#      # Step: Send Final Email with Reports
+#      - name: Send Final CI Report via Outlook
+#        if: success()
+#        uses: dawidd6/action-send-mail@v3
+#        with:
+#          server_address: smtp.office365.com
+#          server_port: 587
+#          username: ${{ secrets.OFFICE365_USER }}
+#          password: ${{ secrets.OFFICE365_PASS }}
+#          subject: "[CI/CD] Apigee & Coverage Reports - ${{ github.ref_name }}"
+#          to: smitar@sidgs.com
+#          from: ${{ secrets.OFFICE365_USER }}
+#          body: |
+#            Hello,
+#
+#            ✅ This is the final CI/CD report for the `${{ github.repository }}` pipeline.
+#
+#            Attached you will find:
+#            - ApigeeLint Report (`apigeelint-report/index.html`)
+#            - Code Coverage Report (`unit-test-coverage-html/index.html`)
+#
+#            Regards,
+#            GitHub Actions
+#          attachments: edge/target/combined-report.zip
 
       # Clean up service account file
       - name: Clean up Service Account file
