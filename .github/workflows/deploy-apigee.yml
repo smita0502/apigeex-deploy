@@ -28,32 +28,32 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Confirm Secret Availability
-        env:
-          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
-          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
-        run: |
-          echo "::notice ::APIGEE_ORG=$APIGEE_ORG"
-          echo "::notice ::APIGEE_ENV=$APIGEE_ENV"
+#      - name: Confirm Secret Availability
+#        env:
+#          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+#          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+#        run: |
+#          echo "::notice ::APIGEE_ORG=$APIGEE_ORG"
+#          echo "::notice ::APIGEE_ENV=$APIGEE_ENV"
 
       - name: Decode SA from base64
         run: |
          echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
     
-      - name: Validate decoded SA JSON
-        run: jq . /tmp/apigee-sa.json
+#      - name: Validate decoded SA JSON
+#        run: jq . /tmp/apigee-sa.json
 
 #    # Write service account JSON to file
 #      - name: Write Service Account to file
 #        run: |
 #          printf "%s" "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
 
-      - name: Confirm SA file content
-        run: |
-          echo "SA JSON file size:"
-          wc -c < /tmp/apigee-sa.json
-          echo "First few characters:"
-          head -c 80 /tmp/apigee-sa.json
+#      - name: Confirm SA file content
+#        run: |
+#          echo "SA JSON file size:"
+#          wc -c < /tmp/apigee-sa.json
+#          echo "First few characters:"
+#          head -c 80 /tmp/apigee-sa.json
 
 #      - name: Write Service Account to file
 #        run: |
@@ -70,12 +70,12 @@ jobs:
         working-directory: edge
 
       # check the target dir for proxy bundle
-      - name: List target output
-        run: ls -lh target
-        working-directory: edge
-
-      - name: Validate service account JSON
-        run: jq . /tmp/apigee-sa.json
+#      - name: List target output
+#        run: ls -lh target
+#        working-directory: edge
+#
+#      - name: Validate service account JSON
+#        run: jq . /tmp/apigee-sa.json
 
       # Static Code Analysis, Unit Test, Coverage
       - name: Static Code Analysis, Unit Test, and Coverage
@@ -107,7 +107,7 @@ jobs:
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update \
-            -Dapigee.config.dir=target/resources/edge
+            -Dapigee.config.dir=resources/edge
         working-directory: edge
 #      - name: Pre-deploy Prep
 #        env:
@@ -136,6 +136,9 @@ jobs:
 
       # Deploy proxy bundle
       - name: Deploy Proxy Bundle
+        env:
+          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
         run: |
           mvn -X apigee-edge:deploy -Papigeex-apiproxy \
             -DorgName=${APIGEE_ORG} \
