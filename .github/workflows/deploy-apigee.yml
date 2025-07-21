@@ -36,10 +36,17 @@ jobs:
           echo "::notice ::APIGEE_ORG=$APIGEE_ORG"
           echo "::notice ::APIGEE_ENV=$APIGEE_ENV"
 
-      # Write service account JSON to file
-      - name: Write Service Account to file
+      - name: Decode SA from base64
         run: |
-          printf "%s" "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
+         echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+    
+      - name: Validate decoded SA JSON
+        run: jq . /tmp/apigee-sa.json
+
+#    # Write service account JSON to file
+#      - name: Write Service Account to file
+#        run: |
+#          printf "%s" "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
 
       - name: Confirm SA file content
         run: |
