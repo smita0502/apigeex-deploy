@@ -64,15 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage-html
-          path: edge/target/unit-test-coverage.zip
-#      - name: Static Code Analysis, Unit Test, and Coverage (with HTML)
-#        run: |
-#          mvn test -q -Pproxy-unit-test
-#          npm install
-#          mkdir -p edge/target/unit-test-coverage-html
-#          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit
-##          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
-#        working-directory: edge
+          path: target/unit-test-coverage.zip
 
       # Apigeelint
       - name: Run ApigeeLint and Generate HTML Report
