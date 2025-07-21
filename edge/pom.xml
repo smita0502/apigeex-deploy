@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>sidgs-api-helloworld-apigeex-${CI_COMMIT_SHA}</artifactId>
+    <artifactId>sidgs-api-helloworld-apigeex</artifactId>
     <packaging>jar</packaging>
     <name>sidgs-api-helloworld-apigeex</name>
 
