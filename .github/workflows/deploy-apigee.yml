@@ -74,6 +74,7 @@ jobs:
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
             -DorgName=${APIGEE_ORG} -DdeploymentEnv=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update \
             -Dapigee.config.dir=target/resources/edge
         working-directory: edge
