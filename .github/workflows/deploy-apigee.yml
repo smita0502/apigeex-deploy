@@ -72,7 +72,7 @@ jobs:
       - name: Pre-deploy Prep
         run: |
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
-            -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+            -DorgName=${APIGEE_ORG} -DdeploymentEnv=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dapigee.config.options=update \
             -Dapigee.config.dir=target/resources/edge
@@ -82,8 +82,8 @@ jobs:
       - name: Deploy Proxy Bundle
         run: |
           mvn -X apigee-edge:deploy -Papigeex-apiproxy \
-            -Dapigee.org=${APIGEE_ORG} \
-            -Dapigee.env=${APIGEE_ENV} \
+            -DorgName=${APIGEE_ORG} \
+            -DdeploymentEnv=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update

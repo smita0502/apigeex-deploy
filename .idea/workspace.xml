@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/edge/env/dev-us/targetServers.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/env/dev-us/targetServers.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edge/org/apiProducts.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/apiProducts.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edge/org/developerApps.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/developerApps.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edge/org/developers.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/developers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,6 +105,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/edge/resources/edge" />
+      <recent name="$PROJECT_DIR$/edge" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -248,7 +248,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="622000" />
+      <workItem from="1753113679820" duration="997000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -453,7 +453,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753114342428</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="test 2 with new bundle">
+      <created>1753114551275</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1753114551275</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
