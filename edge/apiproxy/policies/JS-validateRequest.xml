@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript async="false" continueOnError="false" enabled="true" timeLimit="200" name="JS-validateRequest">
+    <DisplayName>JS-validateRequest</DisplayName>
+    <Properties/>
+    <IncludeURL>jsc://oas.js</IncludeURL>
+    <IncludeURL>jsc://tv4.js</IncludeURL>
+    <ResourceURL>jsc://validateRequest.js</ResourceURL>
+</Javascript>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-faultResponseInvalidApiCall">
+    <DisplayName>AM-faultResponseInvalidApiCall</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>content</Name>
+        <Value>No related API Product has been found.</Value>
+        <Ref/>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

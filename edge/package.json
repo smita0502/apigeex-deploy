@@ -1,0 +1,19 @@
+{
+	"name": "sidgs-api-hello-world",
+	"version": "1.0.0",
+	"license": "GNU General Public License (GPL)",
+	"private": true,
+	"devDependencies": {
+		"apickli": "2.3.3",
+		"apigeelint": "2.0.0",
+		"apigeetool": "0.14.2",
+		"bluebird": "3.7.2",
+		"chai": "4.2.0",
+		"chai-fuzzy": "1.6.1",
+		"cucumber": "6.0.5",
+		"istanbul": "0.4.5",
+		"jshint": "^2.13.4",
+		"mocha": "8.0.1",
+		"sinon": "9.0.2"
+	}
+}

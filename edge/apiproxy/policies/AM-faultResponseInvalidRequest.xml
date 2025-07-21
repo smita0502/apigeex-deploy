@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-faultResponseInvalidRequest">
+    <DisplayName>AM-faultResponseInvalidRequest</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>content</Name>
+        <Value>Invalid Payload or Parameters.</Value>
+        <Ref/>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

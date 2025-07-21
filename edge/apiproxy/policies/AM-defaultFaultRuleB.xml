@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-defaultFaultRuleB">
+    <DisplayName>AM-defaultFaultRuleB</DisplayName>
+    <Properties/>
+    <Set>
+        <Payload ContentType="application/json">{"message": [{response.content}],
+        "error code":"{error.status.code}",
+        "reason":"{error.reason.phrase}",
+        "contact":"https://sidgs.com"}</Payload>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

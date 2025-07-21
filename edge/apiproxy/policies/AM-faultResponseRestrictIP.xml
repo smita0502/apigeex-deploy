@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-faultResponseRestrictIP">
+    <DisplayName>AM-faultResponseRestrictIP</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>content</Name>
+        <Value>Cannot access the resource from the current IP.</Value>
+        <Ref/>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

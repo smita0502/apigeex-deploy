@@ -1,0 +1,129 @@
+name: Deploy to Apigee
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+      APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      # Write service account JSON to file
+      - name: Write Service Account to file
+        run: |
+          echo "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
+
+      # Clean
+      - name: Clean
+        run: mvn clean -q
+        working-directory: edge
+
+      # Build proxy bundle
+      - name: Build Proxy Bundle
+        run: mvn package -q -Papigeex-apiproxy
+        working-directory: edge
+
+      # check the target dir for proxy bundle
+      - name: List target output
+        run: ls -lh target
+        working-directory: edge
+
+      - name: Validate service account JSON
+        run: jq . /tmp/apigee-sa.json
+
+      # Static Code Analysis, Unit Test, Coverage
+      - name: Static Code Analysis, Unit Test, and Coverage
+        run: |
+          mvn test -q -Pproxy-unit-test
+          npm install
+          npx istanbul cover --dir target/unit-test-coverage node_modules/mocha/bin/_mocha test/unit
+        working-directory: edge
+
+      # Linting
+      - name: Linting
+        run: |
+          npm install -g apigeelint
+          mkdir -p target/unit-test-coverage
+          apigeelint -s apiproxy -f html.js > target/unit-test-coverage/apigeelint.html
+        working-directory: edge
+        continue-on-error: true
+
+      # Pre-deploy prep
+      - name: Pre-deploy Prep
+        run: |
+          mvn -X apigee-config:targetservers -Papigeex-apiproxy \
+            -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dapigee.config.options=update
+        working-directory: edge
+
+      # Deploy proxy bundle
+      - name: Deploy Proxy Bundle
+        run: |
+          mvn -X apigee-edge:deploy -Papigeex-apiproxy \
+            -Dapigee.org=${APIGEE_ORG} \
+            -Dapigee.env=${APIGEE_ENV} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update
+        working-directory: edge
+
+      # Post-deploy
+      - name: Post-deploy
+        run: |
+          if [ -f resources/edge/org/apiProducts.json ]; then
+            echo "load api product for integration init"
+            mvn -q apigee-config:apiproducts -Papigeex-apiproxy \
+              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developers.json ]; then
+            echo "load api developer for integration init"
+            mvn -q apigee-config:developers -Papigeex-apiproxy \
+              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developerApps.json ]; then
+            echo "load api developer app for integration init"
+            mvn -q apigee-config:apps -Papigeex-apiproxy \
+              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+            echo "export app key for integration init"
+            mvn -q apigee-config:exportAppKeys -apigeex-apiproxy \
+              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+        working-directory: edge
+
+      # Upload artifact (to Maven repository, optional)
+      - name: Upload Artifact
+        run: mvn deploy -q
+        working-directory: edge
+
+      # Clean up service account file
+      - name: Clean up Service Account file
+        run: rm -f /tmp/apigee-sa.json

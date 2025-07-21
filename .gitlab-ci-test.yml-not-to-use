@@ -1,0 +1,212 @@
+# before_script:
+#    - apt-get install --yes cmake libmatio-dev libblas-dev libsqlite3-dev libcurl4-openssl-dev
+#    - apt-get install --yes libarchive-dev liblzma-dev
+
+variables:
+  MAVEN_CLI_OPTS: ""
+  MAVEN_CLI_OPTS_OLD: "-s .m2/cicd-settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+.parent_pom_template: &parent_pom_definition
+  script:
+    - mvn $MAVEN_CLI_OPTS clean install -f commons-parent-pom.xml
+
+.lint_template: &lint_definition
+  script:
+    - npm install apigeelint -g 
+    - cd edge 
+    - apigeelint -s apiproxy -f table.js  -w lint-results-
+
+.jshint_template: &jshint_definition
+  script:
+    - npm install -g jshint
+    - npm install --save-dev jshint
+    - cd edge/apiproxy/resources/jsc
+    - jshint *.js --show-non-errors > policyReportJSHint.json
+    - mv policyReportJSHint.json ../../../
+    - cd ../../../test/unit
+    - jshint *.js --show-non-errors > unitTestReportJSHint.json
+    - mv unitTestReportJSHint.json ../..
+
+.unit_test_template: &unit_test_definition
+  script:
+    - cd edge/test/unit
+    - npm install --global mocha
+    - npm install --save-dev mocha
+    - npm install --global istanbul
+    - npm install --save-dev istanbul
+    - mocha *.js
+    - istanbul --include-all-sources cover _mocha -- -R dot --recursive *.js > code-coverage.json
+    - mv code-coverage.json ../..
+
+.package_template: &package_definition
+  script:
+    - cd edge
+    - mvn $MAVEN_CLI_OPTS clean package -Papigeex-apiproxy
+
+.pre_deploy_proxy_template: &pre_deploy_proxy_definition
+  script:
+    - cd edge
+    - mvn $MAVEN_CLI_OPTS -Papigeex-apiproxy -Dfile=$SERVICE_ACCOUNT -Denv=$apigeex_env -Dorg=$PROJECT_ID
+      apigee-config:targetservers
+
+.deploy_proxy_template: &deploy_proxy_definition
+  script:
+    - cd edge
+    - mvn $MAVEN_CLI_OPTS apigee-enterprise:deploy -Papigeex-apiproxy -Dfile=$SERVICE_ACCOUNT -Denv=$apigeex_env -Dorg=$PROJECT_ID
+
+.post_deploy_proxy_template: &post_deploy_proxy_definition
+  script: 
+    - cd edge
+    - mvn $MAVEN_CLI_OPTS -Papigeex-apiproxy -Dfile=$SERVICE_ACCOUNT -Denv=$apigeex_env -Dorg=$PROJECT_ID
+      apigee-config:apiproducts 
+      apigee-config:developers 
+      apigee-config:apps apigee-config:exportAppKeys
+
+.upload_artifact_proxy_template: &upload_artifact_proxy_template
+  script:
+    - mvn $MAVEN_CLI_OPTS_OLD -X deploy -Dmaven.test.skip=true
+    - echo "installing the package in local repository"
+
+
+stages:
+  - init
+  - package
+  - deploy
+  - test
+
+build:setup :
+  image: maven:latest
+  <<: *parent_pom_definition
+  stage: init
+
+build:lint :
+  image: node:latest
+  <<: *lint_definition
+  stage: init
+  needs:
+    - build:setup
+  artifacts:
+    when: always
+    paths:
+      - "edge/lint-results-apigeeLint.json"
+
+build:jshint :
+  image: node:latest
+  <<: *jshint_definition
+  stage: init
+  needs:
+    - build:setup
+    - build:lint
+  artifacts:
+    when: always
+    paths:
+      - "edge/policyReportJSHint.json"
+      - "edge/unitTestReportJSHint.json"
+
+build:unit-test :
+  image: node:latest
+  <<: *unit_test_definition
+  stage: init
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+  artifacts:
+    when: always
+    paths:
+      - "edge/code-coverage.json"
+
+#build:report :
+#  image: node:latest
+#  <<: *lint_definition
+#  stage: report
+#  artifacts:
+#      paths:
+#        - "target/apigeelint.html"
+
+build:package :
+  image: maven:latest
+  <<: *package_definition
+  stage: package
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+    - build:unit-test
+  artifacts:
+    paths:
+    - edge/target
+    expire_in: 1 day
+
+build:pre-deploy :
+  image: maven:latest
+  <<: *pre_deploy_proxy_definition
+  stage: deploy
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+    - build:unit-test
+    - build:package
+  artifacts:
+    paths:
+    - edge/target
+    expire_in: 1 day
+
+build:deploy :
+  image: maven:latest
+  <<: *deploy_proxy_definition
+  stage: deploy
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+    - build:unit-test
+    - build:package
+    - build:pre-deploy
+  artifacts:
+    paths:
+    - edge/target
+    expire_in: 1 day
+
+build:post-deploy :
+  image: maven:latest
+  <<: *post_deploy_proxy_definition
+  stage: test
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+    - build:unit-test
+    - build:package
+    - build:pre-deploy
+    - build:deploy
+  artifacts:
+    paths:
+    - edge/target
+    expire_in: 1 day
+
+
+build:upload-artifact :
+  image: maven:latest
+  <<: *upload_artifact_proxy_template
+  stage: test
+  needs:
+    - build:setup
+    - build:lint
+    - build:jshint
+    - build:unit-test
+    - build:package
+    - build:pre-deploy
+    - build:deploy
+    - build:post-deploy
+  artifacts:
+    paths:
+    - edge/target/*.jar
+

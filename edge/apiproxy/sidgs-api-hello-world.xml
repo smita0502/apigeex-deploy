@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="macys-api-hello-world">
+    <Basepaths>/v1/sidgs-hello-world-apigeex</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1575054978040</CreatedAt>
+    <CreatedBy>smitar@sidgs.com</CreatedBy>
+    <Description></Description>
+    <DisplayName>sidgs-api-hello-world-v1</DisplayName>
+    <LastModifiedAt>1575399024331</LastModifiedAt>
+    <LastModifiedBy>smitar@sidgs.com</LastModifiedBy>
+    <ManifestVersion>SHA-512:e16b82ad08fd3410b39861e56cea4d16afc166ffa40f0ed8e632116687196b36dbe57a96c7063b36441c6cc7f77c2a982838fd3c125a95ab4489cb8d5f48ea5f</ManifestVersion>
+    <Policies>
+        <Policy>AM-addCors</Policy>
+        <Policy>AM-defaultFaultRuleA</Policy>
+        <Policy>AM-defaultFaultRuleB</Policy>
+        <Policy>AM-faultResponseAccessTokenExpired</Policy>
+        <Policy>AM-faultResponseInvalidApiCall</Policy>
+        <Policy>AM-faultResponseInvalidClientResponse</Policy>
+        <Policy>AM-faultResponseInvalidRequest</Policy>
+        <Policy>AM-faultResponseInvalidToken</Policy>
+        <Policy>AM-faultResponseJsonThreatProtection</Policy>
+        <Policy>AM-faultResponseRegularExpression</Policy>
+        <Policy>AM-faultResponseRestrictIP</Policy>
+        <Policy>AM-faultResponseSpikeArrest</Policy>
+        <Policy>AM-removeAuthHeader</Policy>
+        <Policy>AM-setPayload</Policy>
+        <Policy>AM-togglePathSuffix</Policy>
+        <Policy>JS-removeResponseHeaders</Policy>
+        <Policy>JS-validateRequest</Policy>
+        <Policy>OA-verifyAccessToken</Policy>
+        <Policy>RF-catchAll</Policy>
+        <Policy>RF-validationError</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources>
+        <Resource>jsc://JS-removeResponseHeaders.js</Resource>
+        <Resource>jsc://oas.js</Resource>
+        <Resource>jsc://tv4.js</Resource>
+        <Resource>jsc://validateRequest.js</Resource>
+    </Resources>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>

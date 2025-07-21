@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TargetEndpoint name="default">
+    <Description/>
+    <FaultRules/>
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <Name>AM-removeAuthHeader</Name>
+            </Step>
+            <Step>
+                <Name>AM-togglePathSuffix</Name>
+            </Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response>
+            <!--Cache with single consistent type-->
+            <!--Execute cache after mediation and translation steps-->
+        </Response>
+    </PostFlow>
+    <Flows/>
+    <HTTPTargetConnection>
+        <!--<LoadBalancer>-->
+        <!--    <Server name="mockTarget"/>-->
+        <!--</LoadBalancer>-->
+        <URL>https://mocktarget.apigee.net</URL>
+    </HTTPTargetConnection>
+</TargetEndpoint>

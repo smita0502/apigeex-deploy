@@ -1,0 +1,12 @@
+{
+	"domains": {
+		"eval": "https://sidgs-apigeex.sidglobal.io"
+	},
+	"sidgs-api-helloworld-apigeex": {
+		"basepath": "/v1/sidgs-hello-world-apigeex",
+		"product":"hello-worldProduct",
+		"app":"hello-worldApp",
+		"org":"${PROJECT_ID}",
+		"env":"${apigeex_env}"
+	}
+}

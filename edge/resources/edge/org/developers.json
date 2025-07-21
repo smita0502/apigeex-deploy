@@ -1,0 +1,12 @@
+[
+    {
+        "email": "integration-tester@sidgs.com",
+        "firstName": "integration",
+        "lastName": "tester",
+        "userName": "integration-tester@sidgs.com",
+        "attributes": [{
+            "name": "EXAMPLE",
+            "value": "Value"
+        }]
+    }
+]

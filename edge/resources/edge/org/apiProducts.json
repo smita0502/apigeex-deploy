@@ -1,0 +1,30 @@
+[
+    {
+        "name": "hello-worldProduct",
+        "apiResources": [],
+        "approvalType": "auto",
+        "attributes": [
+            {
+                "name": "description",
+                "value": "hello-worldProduct"
+            },
+            {
+                "name": "access",
+                "value": "private"
+            }
+        ],
+        "description": "hello-worldProduct",
+        "displayName": "hello-worldProduct",
+        "environments": [
+            "dev-us"
+        ],
+        "proxies": [
+            "sidgs-api-helloworld-apigeex" ,
+            "oauth2"
+        ],
+        "quota": "10000",
+        "quotaInterval": "1",
+        "quotaTimeUnit": "month",
+        "scopes": []
+    } 
+]

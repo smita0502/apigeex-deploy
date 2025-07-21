@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+    <Description/>
+    <DefaultFaultRule name="fault-rule">
+        <AlwaysEnforce>true</AlwaysEnforce>
+        <Step>
+            <Condition>(content != null)</Condition>
+            <Name>AM-setPayload</Name>
+        </Step>
+        <Step>
+            <Condition>(content == null) AND (response.header.Content-Type !~ "application/json*")</Condition>
+            <Name>AM-defaultFaultRuleA</Name>
+        </Step>
+        <Step>
+            <Condition>(content == null) AND (response.header.Content-Type ~ "application/json*")</Condition>
+             <Name>AM-defaultFaultRuleB</Name>
+        </Step>
+        <Step>
+            <Condition>(response.headers.names != null)</Condition>
+            <Name>JS-removeResponseHeaders</Name>
+        </Step>
+    </DefaultFaultRule>
+    <FaultRules>
+        <FaultRule name="RequestOrPayloadValidation">
+            <Step><Name>AM-faultResponseInvalidRequest</Name>
+            </Step>
+            <Condition>(raisefault.RF-validationError.failed = "true")</Condition>
+        </FaultRule>
+        <FaultRule name="OAuthInvalidClient">
+            <Step>
+                <Name>AM-faultResponseInvalidClientResponse</Name>
+            </Step>
+            <Condition>(fault.name = "invalid_client") OR (fault.name = "InvalidClientIdentifier")</Condition>
+        </FaultRule>
+        <FaultRule name="OAuthV2Faults">
+            <Step>
+                <Name>AM-faultResponseInvalidToken</Name>
+            </Step>
+            <Condition>(fault.name matches "invalid_access_token") OR (fault.name matches "InvalidAccessToken")</Condition>
+        </FaultRule>
+        <FaultRule name="OAuthTokenExpired">
+            <Step>
+                <Name>AM-faultResponseAccessTokenExpired</Name>
+            </Step>
+            <Condition>(fault.name matches "access_token_expired")</Condition>
+        </FaultRule>
+        <FaultRule name="OAuthNoAPIProduct">
+            <Step>
+                <Name>AM-faultResponseInvalidApiCall</Name>
+            </Step>
+            <Condition>(fault.name = "InvalidAPICallAsNoApiProductMatchFound")</Condition>
+        </FaultRule>
+        <FaultRule name="spikeArrest">
+            <Step>
+                <Name>AM-faultResponseSpikeArrest</Name>
+            </Step>
+            <Condition>(fault.name Matches "SpikeArrestViolation")</Condition>
+        </FaultRule>
+        <FaultRule name="restrictIP">
+            <Step>
+                <Name>AM-faultResponseRestrictIP</Name>
+            </Step>
+            <Condition>(fault.name Matches "IPDeniedAccess")</Condition>
+        </FaultRule>
+        <FaultRule name="regularExpression">
+            <Step>
+                <Name>AM-faultResponseRegularExpression</Name>
+            </Step>
+            <Condition>(fault.name Matches "ThreatDetected")</Condition>
+        </FaultRule>
+        <FaultRule name="JsonThreatProtection">
+            <Step>
+                <Name>AM-faultResponseJsonThreatProtection</Name>
+            </Step>
+            <Condition>(fault.name Matches "SourceUnavailable")</Condition>
+        </FaultRule>
+    </FaultRules>
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <Name>OA-verifyAccessToken</Name>
+                <Condition>(request.verb != "OPTIONS")</Condition>
+            </Step>
+            <Step><Name>RF-validationError</Name>
+                <Condition>(request.header.Content-Type !~ "application/json*") and (request.verb = "POST")</Condition>
+            </Step>
+            <!--If Content-Type = application/xml, remove this policy -->
+            <Step><Name>JS-validateRequest</Name>
+                <Condition>((request.verb = "POST") or (request.verb = "PUT"))</Condition>
+            </Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    <Flows>
+        <Flow name="Flow-GET-json">
+            <Description/>
+            <Request/>
+            <Response/>
+            <Condition>(proxy.pathsuffix MatchesPath "/json") and (request.verb = "GET")</Condition>
+        </Flow>
+        <Flow name="CorsOptionPreFlight">
+            <Request/>
+            <Response>
+                <Step>
+                    <Name>AM-addCors</Name>
+                </Step>
+            </Response>
+            <Condition>(request.verb = "OPTIONS") and (request.header.origin != null) and (request.header.Access-Control-Request-Method != null)</Condition>
+        </Flow>
+        <Flow name="Flow-Catch-All">
+            <Description>Catches all the routes referring Invalid resources</Description>
+            <Request>
+                <Step>
+                    <Name>RF-catchAll</Name>
+                </Step>
+            </Request>
+            <Response/>
+        </Flow>
+    </Flows>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response>
+            <Step>
+                <Name>AM-addCors</Name>
+                <Condition>(request.header.origin != null)</Condition>
+            </Step>
+            <Step>
+                <Name>JS-removeResponseHeaders</Name>
+            </Step>
+        </Response>
+    </PostFlow>
+    <HTTPProxyConnection>
+        <BasePath>/v1/sidgs-hello-world-apigeex</BasePath>
+        <Properties/>
+        <VirtualHost>secure</VirtualHost>
+    </HTTPProxyConnection>
+    <RouteRule name="OptionsNoRoute">
+        <Condition>(request.verb = "OPTIONS")</Condition>
+    </RouteRule>
+    <RouteRule name="default">
+        <TargetEndpoint>default</TargetEndpoint>
+    </RouteRule>
+</ProxyEndpoint>

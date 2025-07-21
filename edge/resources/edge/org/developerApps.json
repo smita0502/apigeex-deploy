@@ -1,0 +1,12 @@
+{
+    "integration-tester@sidgs.com": [
+        {
+            "apiProducts": [
+                "hello-worldProduct"
+            ],
+            "callbackUrl": "",
+            "name": "hello-worldApp",
+            "scopes": []
+        }
+    ]
+}
