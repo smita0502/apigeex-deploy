@@ -30,36 +30,9 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-#      - name: Confirm Secret Availability
-#        env:
-#          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
-#          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
-#        run: |
-#          echo "::notice ::APIGEE_ORG=$APIGEE_ORG"
-#          echo "::notice ::APIGEE_ENV=$APIGEE_ENV"
-
       - name: Decode SA from base64
         run: |
          echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
-    
-#      - name: Validate decoded SA JSON
-#        run: jq . /tmp/apigee-sa.json
-
-#    # Write service account JSON to file
-#      - name: Write Service Account to file
-#        run: |
-#          printf "%s" "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
-
-#      - name: Confirm SA file content
-#        run: |
-#          echo "SA JSON file size:"
-#          wc -c < /tmp/apigee-sa.json
-#          echo "First few characters:"
-#          head -c 80 /tmp/apigee-sa.json
-
-#      - name: Write Service Account to file
-#        run: |
-#          echo "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
 
       # Clean
       - name: Clean
@@ -71,29 +44,21 @@ jobs:
         run: mvn package -q -Papigeex-apiproxy
         working-directory: edge
 
-      # check the target dir for proxy bundle
-#      - name: List target output
-#        run: ls -lh target
-#        working-directory: edge
-#
-#      - name: Validate service account JSON
-#        run: jq . /tmp/apigee-sa.json
-
-      # Static Code Analysis, Unit Test, Coverage
-      - name: Static Code Analysis, Unit Test, and Coverage
+      # Static code analysis
+      - name: Static Code Analysis, Unit Test, and Coverage (with HTML)
         run: |
           mvn test -q -Pproxy-unit-test
           npm install
-          npx istanbul cover --dir target/unit-test-coverage node_modules/mocha/bin/_mocha test/unit
+          mkdir -p edge/target/unit-test-coverage-html
+          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
         working-directory: edge
 
-      # Linting
-      - name: Linting
+      # Apigeelint
+      - name: Run ApigeeLint and Generate HTML Report
         run: |
           npm install -g apigeelint
-          mkdir -p target/unit-test-coverage
-          apigeelint -s apiproxy -f html.js > target/unit-test-coverage/apigeelint.html
-        working-directory: edge
+          mkdir -p edge/target/apigeelint-report
+          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
         continue-on-error: true
 
       # Pre-deploy prep
@@ -155,6 +120,42 @@ jobs:
       - name: Deploy Maven Artifacts to JFrog
         run: mvn deploy -s ../.m2/cicd-settings.xml
         working-directory: edge
+
+      # Step: Zip both reports
+      - name: Zip ApigeeLint and Coverage Reports
+        if: success()
+        run: |
+          mkdir -p edge/target/email-report
+          cp -r edge/target/apigeelint-report edge/target/email-report/
+          cp -r edge/target/unit-test-coverage-html edge/target/email-report/
+          cd edge/target
+          zip -r combined-report.zip email-report
+        working-directory: .
+
+      # Step: Send Final Email with Reports
+      - name: Send Final CI Report via Outlook
+        if: success()
+        uses: mattnotmitt/send-email@v1
+        with:
+          server_address: smtp.office365.com
+          server_port: 587
+          username: ${{ secrets.OFFICE365_USER }}
+          password: ${{ secrets.OFFICE365_PASS }}
+          subject: "[CI/CD] Apigee & Coverage Reports - ${{ github.ref_name }}"
+          to: smitar@sidgs.com
+          from: ${{ secrets.OFFICE365_USER }}
+          body: |
+            Hello,
+
+            ✅ This is the final CI/CD report for the `${{ github.repository }}` pipeline.
+
+            Attached you will find:
+            - ApigeeLint Report (`apigeelint-report/index.html`)
+            - Code Coverage Report (`unit-test-coverage-html/index.html`)
+
+            Regards,  
+            GitHub Actions
+          attachments: edge/target/combined-report.zip
 
       # Clean up service account file
       - name: Clean up Service Account file
