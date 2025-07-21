@@ -247,7 +247,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="5677000" />
+      <workItem from="1753113679820" duration="6313000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -522,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753121511211</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="test 9 - deploy stage">
+      <created>1753122001113</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1753122001113</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -599,7 +606,8 @@
     <MESSAGE value="test 6" />
     <MESSAGE value="test 7" />
     <MESSAGE value="test 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 8" />
+    <MESSAGE value="test 9 - deploy stage" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 9 - deploy stage" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">

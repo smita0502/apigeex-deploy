@@ -124,26 +124,26 @@ jobs:
           if [ -f resources/edge/org/apiProducts.json ]; then
             echo "load api product for integration init"
             mvn -q apigee-config:apiproducts -Papigeex-apiproxy \
-              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dorg=${APIGEE_ORG} -Denv=${APIGEE_ENV} \
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
           fi
           if [ -f resources/edge/org/developers.json ]; then
             echo "load api developer for integration init"
             mvn -q apigee-config:developers -Papigeex-apiproxy \
-              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dorg=${APIGEE_ORG} -Denv=${APIGEE_ENV} \
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
           fi
           if [ -f resources/edge/org/developerApps.json ]; then
             echo "load api developer app for integration init"
             mvn -q apigee-config:apps -Papigeex-apiproxy \
-              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dorg=${APIGEE_ORG} -Denv=${APIGEE_ENV} \
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
             echo "export app key for integration init"
             mvn -q apigee-config:exportAppKeys -apigeex-apiproxy \
-              -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
+              -Dorg=${APIGEE_ORG} -Denv=${APIGEE_ENV} \
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
           fi
