@@ -50,21 +50,40 @@ jobs:
           npm install
 
           echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
-          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit/*.js
+          npx nyc --reporter=html --report-dir=target/unit-test-coverage-html mocha test/unit/*.js
 
           echo "📁 Listing contents of the HTML report directory:"
-          ls -R edge/target/unit-test-coverage-html || echo "⚠️ Report not found"
+          ls -R target/unit-test-coverage-html || echo "⚠️ Report not found"
 
           echo "📤 Uploading Code Coverage HTML Report as Artifact..."
-          zip -r edge/target/unit-test-coverage.zip edge/target/unit-test-coverage-html
-
+          zip -r target/unit-test-coverage.zip target/unit-test-coverage-html
         working-directory: edge
 
       - name: Upload Coverage Report ZIP
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage-html
-          path: target/unit-test-coverage.zip
+          path: edge/target/unit-test-coverage.zip
+#      - name: Run Tests, Generate Coverage Report, and Upload Artifact
+#        run: |
+#          npm install
+#
+#          echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
+#          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit/*.js
+#
+#          echo "📁 Listing contents of the HTML report directory:"
+#          ls -R edge/target/unit-test-coverage-html || echo "⚠️ Report not found"
+#
+#          echo "📤 Uploading Code Coverage HTML Report as Artifact..."
+#          zip -r edge/target/unit-test-coverage.zip edge/target/unit-test-coverage-html
+#
+#        working-directory: edge
+#
+#      - name: Upload Coverage Report ZIP
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: unit-test-coverage-html
+#          path: target/unit-test-coverage.zip
 
       # Apigeelint
       - name: Run ApigeeLint and Generate HTML Report

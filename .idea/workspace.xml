@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="" />
+    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -245,14 +247,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="12195000" />
-    </task>
-    <task id="LOCAL-00004" summary="updated yml file">
-      <created>1650046629112</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1650046629112</updated>
+      <workItem from="1753113679820" duration="12479000" />
     </task>
     <task id="LOCAL-00005" summary="updated yml file">
       <created>1650046835519</created>
@@ -590,7 +585,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753130874242</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="test 22">
+      <created>1753131228266</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1753131228266</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -644,7 +646,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test 1 with new bundle" />
     <MESSAGE value="fixing pom.xml issue" />
     <MESSAGE value="test 2 with new bundle" />
     <MESSAGE value="new variables for org and env name" />
@@ -669,7 +670,8 @@
     <MESSAGE value="test 19" />
     <MESSAGE value="test 20" />
     <MESSAGE value="test 21" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 21" />
+    <MESSAGE value="test 22" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 22" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
