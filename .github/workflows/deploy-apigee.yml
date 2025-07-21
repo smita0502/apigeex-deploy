@@ -39,7 +39,18 @@ jobs:
       # Write service account JSON to file
       - name: Write Service Account to file
         run: |
-          echo "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
+          printf "%s" "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
+
+      - name: Confirm SA file content
+        run: |
+          echo "SA JSON file size:"
+          wc -c < /tmp/apigee-sa.json
+          echo "First few characters:"
+          head -c 80 /tmp/apigee-sa.json
+
+#      - name: Write Service Account to file
+#        run: |
+#          echo "${{ secrets.APIGEE_SERVICE_ACCOUNT }}" > /tmp/apigee-sa.json
 
       # Clean
       - name: Clean
