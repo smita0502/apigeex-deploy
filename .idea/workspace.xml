@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="test 1 with new bundle">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/edge/env/dev-us/targetServers.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/env/dev-us/targetServers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edge/org/apiProducts.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/apiProducts.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edge/org/developerApps.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/developerApps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edge/org/developers.json" beforeDir="false" afterPath="$PROJECT_DIR$/edge/resources/edge/org/developers.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,7 +248,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="319000" />
+      <workItem from="1753113679820" duration="622000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -443,7 +446,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753113786466</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="test 2 with new bundle">
+      <created>1753114342428</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1753114342428</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -510,7 +520,8 @@
     <MESSAGE value="updated the new api proxy with the relevent files" />
     <MESSAGE value="test 1 with new bundle" />
     <MESSAGE value="fixing pom.xml issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing pom.xml issue" />
+    <MESSAGE value="test 2 with new bundle" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 2 with new bundle" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">

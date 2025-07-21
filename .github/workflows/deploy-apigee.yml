@@ -74,7 +74,8 @@ jobs:
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
             -Dapigee.org=${APIGEE_ORG} -Dapigee.env=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
-            -Dapigee.config.options=update
+            -Dapigee.config.options=update \
+            -Dapigee.config.dir=target/resources/edge
         working-directory: edge
 
       # Deploy proxy bundle
