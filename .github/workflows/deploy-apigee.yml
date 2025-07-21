@@ -98,7 +98,7 @@ jobs:
       - name: Pre-deploy Prep
         run: |
           echo "Using APIGEE_ENV=${{ secrets.APIGEE_ENV }}"
-          mvn -X apigee-config:targetservers -Papigeex-apiproxy \
+          mvn -q apigee-config:targetservers -Papigeex-apiproxy \
             -Dorg="${{ secrets.APIGEE_ORG }}" \
             -Denv="${{ secrets.APIGEE_ENV }}" \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
@@ -110,7 +110,7 @@ jobs:
       # Deploy proxy bundle
       - name: Deploy Proxy Bundle
         run: |
-          mvn -X io.apigee.build-tools.enterprise4g:apigee-edge-maven-plugin:2.1.0:deploy -Papigeex-apiproxy \
+          mvn -q io.apigee.build-tools.enterprise4g:apigee-edge-maven-plugin:2.1.0:deploy -Papigeex-apiproxy \
             -Dorg=${APIGEE_ORG} \
             -Denv=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
@@ -142,7 +142,7 @@ jobs:
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
             echo "export app key for integration init"
-            mvn -q apigee-config:exportAppKeys -apigeex-apiproxy \
+            mvn -q apigee-config:exportAppKeys -Papigeex-apiproxy \
               -Dorg=${APIGEE_ORG} -Denv=${APIGEE_ENV} \
               -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
               -Dapigee.config.options=update
