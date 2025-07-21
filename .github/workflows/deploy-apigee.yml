@@ -28,6 +28,14 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Confirm Secret Availability
+        env:
+          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+        run: |
+          echo "::notice ::APIGEE_ORG=$APIGEE_ORG"
+          echo "::notice ::APIGEE_ENV=$APIGEE_ENV"
+
       # Write service account JSON to file
       - name: Write Service Account to file
         run: |
@@ -70,16 +78,33 @@ jobs:
 
       # Pre-deploy prep
       - name: Pre-deploy Prep
+        env:
+          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
         run: |
           echo "APIGEE_ENV=$APIGEE_ENV"
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
-            "-DorgName=$APIGEE_ORG" \
-            "-DdeploymentEnv=$APIGEE_ENV" \
-            "-Dapigee.serviceaccount.file=/tmp/apigee-sa.json" \
-            "-Dhosturl=https://apigee.googleapis.com" \
-            "-Dapigee.config.options=update" \
-            "-Dapigee.config.dir=target/resources/edge"
+            -DorgName=$APIGEE_ORG \
+            -DdeploymentEnv=$APIGEE_ENV \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update \
+            -Dapigee.config.dir=target/resources/edge
         working-directory: edge
+#      - name: Pre-deploy Prep
+#        env:
+#          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+#          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+#        run: |
+#          echo "APIGEE_ENV=$APIGEE_ENV"
+#          mvn -X apigee-config:targetservers -Papigeex-apiproxy \
+#            -DorgName=$APIGEE_ORG \
+#            -DdeploymentEnv=$APIGEE_ENV \
+#            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+#            -Dhosturl=https://apigee.googleapis.com \
+#            -Dapigee.config.options=update \
+#            -Dapigee.config.dir=target/resources/edge
+#        working-directory: edge
 
 #      - name: Pre-deploy Prep
 #        run: |
