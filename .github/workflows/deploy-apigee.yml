@@ -153,7 +153,7 @@ jobs:
 
       # Upload artifact (to Maven repository, optional)
       - name: Deploy Maven Artifacts to JFrog
-        run: mvn deploy -s .m2/settings.xml
+        run: mvn deploy -s ../.m2/cicd-settings.xml
         working-directory: edge
 
       # Clean up service account file

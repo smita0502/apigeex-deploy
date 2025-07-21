@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.m2/cicd-settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.m2/cicd-settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commons-parent-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/commons-parent-pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,7 +247,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="7873000" />
+      <workItem from="1753113679820" duration="8281000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -546,7 +543,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753124698882</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="test 12 to deploy to jfrog">
+      <created>1753126207630</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1753126207630</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -600,7 +604,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated yml file" />
     <MESSAGE value="update yml file with needs keyword" />
     <MESSAGE value="fix the jshint stage" />
     <MESSAGE value="trying checking in 2 yml files" />
@@ -625,7 +628,8 @@
     <MESSAGE value="test 9 - deploy stage" />
     <MESSAGE value="test 10 - post deploy stage" />
     <MESSAGE value="test 11 - post deploy stage" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 11 - post deploy stage" />
+    <MESSAGE value="test 12 to deploy to jfrog" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 12 to deploy to jfrog" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
