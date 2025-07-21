@@ -99,8 +99,8 @@ jobs:
         run: |
           echo "Using APIGEE_ENV=${{ secrets.APIGEE_ENV }}"
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
-            -DorgName="${{ secrets.APIGEE_ORG }}" \
-            -DdeploymentEnv="${{ secrets.APIGEE_ENV }}" \
+            -Dorg="${{ secrets.APIGEE_ORG }}" \
+            -Denv="${{ secrets.APIGEE_ENV }}" \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update \
@@ -152,8 +152,8 @@ jobs:
           APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
         run: |
           mvn -X apigee-edge:deploy -Papigeex-apiproxy \
-            -DorgName=${APIGEE_ORG} \
-            -DdeploymentEnv=${APIGEE_ENV} \
+            -Dorg=${APIGEE_ORG} \
+            -Denv=${APIGEE_ENV} \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update
