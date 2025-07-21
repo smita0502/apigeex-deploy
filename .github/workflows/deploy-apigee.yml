@@ -44,78 +44,92 @@ jobs:
         run: mvn package -q -Papigeex-apiproxy
         working-directory: edge
 
-      # Static code analysis
-      - name: Run Tests, Generate Coverage Report, and Upload Artifact
+      # ✅ Run Unit Tests, Generate HTML Code Coverage Report
+      - name: Run Tests and Generate Coverage Report
         run: |
           npm install
-
           echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
           npx nyc --reporter=html --report-dir=target/unit-test-coverage-html mocha test/unit/*.js
-
-          echo "📁 Listing contents of the HTML report directory:"
-          ls -R target/unit-test-coverage-html || echo "⚠️ Report not found"
-
-          echo "📤 Uploading Code Coverage HTML Report as Artifact..."
-          zip -r target/unit-test-coverage.zip target/unit-test-coverage-html
+          echo "✅ Coverage HTML generated at target/unit-test-coverage-html"
         working-directory: edge
 
-      - name: Upload Coverage Report ZIP
+      # ✅ Run ApigeeLint and Generate HTML Report
+      - name: Run ApigeeLint
+        run: |
+          npm install -g apigeelint
+          mkdir -p edge/target/apigeelint-report
+          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
+
+      # ✅ Package both reports into one zip
+      - name: Create Combined Report ZIP
+        run: |
+          mkdir -p edge/target/email-report
+
+          cp -r edge/target/apigeelint-report edge/target/email-report/ || echo "⚠️ apigeelint report missing"
+          cp -r edge/target/unit-test-coverage-html edge/target/email-report/ || echo "⚠️ coverage report missing"
+
+          cd edge/target
+          zip -r combined-report.zip email-report
+
+      # ✅ Upload final single artifact
+      - name: Upload Final Combined Report
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-coverage-html
-          path: edge/target/unit-test-coverage.zip
+          name: apigee-lint-and-coverage
+          path: edge/target/combined-report.zip
+
+#      # Static code analysis
 #      - name: Run Tests, Generate Coverage Report, and Upload Artifact
 #        run: |
 #          npm install
 #
 #          echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
-#          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit/*.js
+#          npx nyc --reporter=html --report-dir=target/unit-test-coverage-html mocha test/unit/*.js
 #
 #          echo "📁 Listing contents of the HTML report directory:"
-#          ls -R edge/target/unit-test-coverage-html || echo "⚠️ Report not found"
+#          ls -R target/unit-test-coverage-html || echo "⚠️ Report not found"
 #
 #          echo "📤 Uploading Code Coverage HTML Report as Artifact..."
-#          zip -r edge/target/unit-test-coverage.zip edge/target/unit-test-coverage-html
-#
+#          zip -r target/unit-test-coverage.zip target/unit-test-coverage-html
 #        working-directory: edge
 #
 #      - name: Upload Coverage Report ZIP
 #        uses: actions/upload-artifact@v4
 #        with:
 #          name: unit-test-coverage-html
-#          path: target/unit-test-coverage.zip
-
-      # Apigeelint
-      - name: Run ApigeeLint and Generate HTML Report
-        run: |
-          npm install -g apigeelint
-          mkdir -p edge/target/apigeelint-report
-          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
-#        continue-on-error: true
-
-      - name: Package Reports into Zip
-        run: |
-          mkdir -p edge/target/email-report
-
-          if [ -d edge/target/apigeelint-report ]; then
-            cp -r edge/target/apigeelint-report edge/target/email-report/
-          fi
-
-          if [ -d edge/target/unit-test-coverage-html ]; then
-            cp -r edge/target/unit-test-coverage-html edge/target/email-report/
-          fi
-
-          cd edge/target
-          zip -r combined-report.zip email-report || echo "Zip step skipped due to missing reports"
-
-      - name: Upload ApigeeLint and Code Coverage Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: apigee-lint-and-coverage
-          path: |
-            edge/target/apigeelint-report/
-            edge/target/unit-test-coverage-html/
-            edge/target/combined-report.zip   
+#          path: edge/target/unit-test-coverage.zip
+#
+#      # Apigeelint
+#      - name: Run ApigeeLint and Generate HTML Report
+#        run: |
+#          npm install -g apigeelint
+#          mkdir -p edge/target/apigeelint-report
+#          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
+##        continue-on-error: true
+#
+#      - name: Package Reports into Zip
+#        run: |
+#          mkdir -p edge/target/email-report
+#
+#          if [ -d edge/target/apigeelint-report ]; then
+#            cp -r edge/target/apigeelint-report edge/target/email-report/
+#          fi
+#
+#          if [ -d edge/target/unit-test-coverage-html ]; then
+#            cp -r edge/target/unit-test-coverage-html edge/target/email-report/
+#          fi
+#
+#          cd edge/target
+#          zip -r combined-report.zip email-report || echo "Zip step skipped due to missing reports"
+#
+#      - name: Upload ApigeeLint and Code Coverage Reports
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: apigee-lint-and-coverage
+#          path: |
+#            edge/target/apigeelint-report/
+#            edge/target/unit-test-coverage-html/
+#            edge/target/combined-report.zip
 
       # Step: Send Final Email with Reports
       - name: Send Final CI Report via Outlook
