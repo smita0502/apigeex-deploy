@@ -96,19 +96,30 @@ jobs:
 
       # Pre-deploy prep
       - name: Pre-deploy Prep
-        env:
-          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
-          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
         run: |
-          echo "APIGEE_ENV=$APIGEE_ENV"
+          echo "Using APIGEE_ENV=${{ secrets.APIGEE_ENV }}"
           mvn -X apigee-config:targetservers -Papigeex-apiproxy \
-            -DorgName=$APIGEE_ORG \
-            -DdeploymentEnv=$APIGEE_ENV \
+            -DorgName="${{ secrets.APIGEE_ORG }}" \
+            -DdeploymentEnv="${{ secrets.APIGEE_ENV }}" \
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update \
             -Dapigee.config.dir=resources/edge
         working-directory: edge
+#      - name: Pre-deploy Prep
+#        env:
+#          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+#          APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+#        run: |
+#          echo "APIGEE_ENV=$APIGEE_ENV"
+#          mvn -X apigee-config:targetservers -Papigeex-apiproxy \
+#            -DorgName=$APIGEE_ORG \
+#            -DdeploymentEnv=$APIGEE_ENV \
+#            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+#            -Dhosturl=https://apigee.googleapis.com \
+#            -Dapigee.config.options=update \
+#            -Dapigee.config.dir=resources/edge
+#        working-directory: edge
 #      - name: Pre-deploy Prep
 #        env:
 #          APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
