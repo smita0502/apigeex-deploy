@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -248,7 +247,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="997000" />
+      <workItem from="1753113679820" duration="1814000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -460,7 +459,21 @@
       <option name="project" value="LOCAL" />
       <updated>1753114551275</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="new variables for org and env name">
+      <created>1753114952833</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1753114952833</updated>
+    </task>
+    <task id="LOCAL-00032" summary="test 1">
+      <created>1753115432959</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1753115432959</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -528,7 +541,9 @@
     <MESSAGE value="test 1 with new bundle" />
     <MESSAGE value="fixing pom.xml issue" />
     <MESSAGE value="test 2 with new bundle" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 2 with new bundle" />
+    <MESSAGE value="new variables for org and env name" />
+    <MESSAGE value="test 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 1" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
