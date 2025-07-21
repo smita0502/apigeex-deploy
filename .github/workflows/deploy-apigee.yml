@@ -50,7 +50,8 @@ jobs:
           mvn test -q -Pproxy-unit-test
           npm install
           mkdir -p edge/target/unit-test-coverage-html
-          npx istanbul cover test/unit/*.js --dir=target/unit-test-coverage-html --report html
+#          npx istanbul cover test/unit/*.js --dir=target/unit-test-coverage-html --report html
+          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit/*.js
 #          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
         working-directory: edge
 
