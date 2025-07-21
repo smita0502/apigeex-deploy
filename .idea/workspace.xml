@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="test 1 with new bundle" />
+    <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="test 1 with new bundle">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -84,19 +86,19 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "TF_FMT": "false",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/smitarani/Documents/Projects/Envestnet/sidgs gitlab/apigeex-hello-world",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;TF_FMT&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/smitarani/Documents/Projects/SIDGS Internal/github/apigeex-deploy&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -228,7 +230,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="1fb43e4f-4e76-47ec-b228-80863333ead3" name="Default" comment="" />
+      <changelist id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="test 1 with new bundle" />
       <created>1650034558235</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -242,6 +244,8 @@
       <workItem from="1651170440490" duration="19000" />
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
+      <workItem from="1753112103088" duration="406000" />
+      <workItem from="1753113679820" duration="319000" />
     </task>
     <task id="LOCAL-00001" summary="added gitlab ci yml file">
       <created>1650039772732</created>
@@ -432,7 +436,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753111495283</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="fixing pom.xml issue">
+      <created>1753113786466</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1753113786466</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -474,6 +485,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added gitlab ci yml file" />
     <MESSAGE value="updated yml file" />
@@ -487,7 +509,8 @@
     <MESSAGE value="${CI_COMMIT_SHA} testing" />
     <MESSAGE value="updated the new api proxy with the relevent files" />
     <MESSAGE value="test 1 with new bundle" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 1 with new bundle" />
+    <MESSAGE value="fixing pom.xml issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing pom.xml issue" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
