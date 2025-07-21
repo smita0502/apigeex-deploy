@@ -247,14 +247,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="12734000" />
-    </task>
-    <task id="LOCAL-00006" summary="updated yml file">
-      <created>1650046908647</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1650046908647</updated>
+      <workItem from="1753113679820" duration="13183000" />
     </task>
     <task id="LOCAL-00007" summary="update yml file with needs keyword">
       <created>1650047028151</created>
@@ -592,7 +585,14 @@
       <option name="project" value="LOCAL" />
       <updated>1753131469764</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="test 24">
+      <created>1753131784551</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1753131784551</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -646,7 +646,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test 2 with new bundle" />
     <MESSAGE value="new variables for org and env name" />
     <MESSAGE value="test 1" />
     <MESSAGE value="test 2" />
@@ -671,7 +670,8 @@
     <MESSAGE value="test 21" />
     <MESSAGE value="test 22" />
     <MESSAGE value="test 23" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 23" />
+    <MESSAGE value="test 24" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 24" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
