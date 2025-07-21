@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="352eab96-8b05-43b8-b70f-e632df94624c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-apigee.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -247,14 +248,7 @@
       <workItem from="1651773702589" duration="5625000" />
       <workItem from="1652219830673" duration="2092000" />
       <workItem from="1753112103088" duration="406000" />
-      <workItem from="1753113679820" duration="11102000" />
-    </task>
-    <task id="LOCAL-00001" summary="added gitlab ci yml file">
-      <created>1650039772732</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1650039772732</updated>
+      <workItem from="1753113679820" duration="11644000" />
     </task>
     <task id="LOCAL-00002" summary="updated yml file">
       <created>1650044185688</created>
@@ -585,7 +579,21 @@
       <option name="project" value="LOCAL" />
       <updated>1753129466579</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="test 18">
+      <created>1753129767605</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1753129767605</updated>
+    </task>
+    <task id="LOCAL-00050" summary="test 19">
+      <created>1753129953247</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1753129953248</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -639,8 +647,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="testing cucumber" />
-    <MESSAGE value="fixed cucumber reports" />
     <MESSAGE value="${CI_COMMIT_SHA} testing" />
     <MESSAGE value="updated the new api proxy with the relevent files" />
     <MESSAGE value="test 1 with new bundle" />
@@ -664,7 +670,9 @@
     <MESSAGE value="test 15" />
     <MESSAGE value="test 16" />
     <MESSAGE value="test 17" />
-    <option name="LAST_COMMIT_MESSAGE" value="test 17" />
+    <MESSAGE value="test 18" />
+    <MESSAGE value="test 19" />
+    <option name="LAST_COMMIT_MESSAGE" value="test 19" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitlab-ci.yml">
