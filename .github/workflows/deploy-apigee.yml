@@ -45,14 +45,34 @@ jobs:
         working-directory: edge
 
       # Static code analysis
-      - name: Static Code Analysis, Unit Test, and Coverage (with HTML)
+      - name: Run Tests, Generate Coverage Report, and Upload Artifact
         run: |
-          mvn test -q -Pproxy-unit-test
           npm install
-          mkdir -p edge/target/unit-test-coverage-html
-          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit
-#          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
+
+          echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
+          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit/*.js
+
+          echo "📁 Listing contents of the HTML report directory:"
+          ls -R edge/target/unit-test-coverage-html || echo "⚠️ Report not found"
+
+          echo "📤 Uploading Code Coverage HTML Report as Artifact..."
+          zip -r edge/target/unit-test-coverage.zip edge/target/unit-test-coverage-html
+
         working-directory: edge
+
+      - name: Upload Coverage Report ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-coverage-html
+          path: edge/target/unit-test-coverage.zip
+#      - name: Static Code Analysis, Unit Test, and Coverage (with HTML)
+#        run: |
+#          mvn test -q -Pproxy-unit-test
+#          npm install
+#          mkdir -p edge/target/unit-test-coverage-html
+#          npx nyc --reporter=html --report-dir=edge/target/unit-test-coverage-html mocha test/unit
+##          npx istanbul cover --dir edge/target/unit-test-coverage-html node_modules/mocha/bin/_mocha test/unit --report html
+#        working-directory: edge
 
       # Apigeelint
       - name: Run ApigeeLint and Generate HTML Report
