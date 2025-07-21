@@ -135,7 +135,7 @@ jobs:
       # Step: Send Final Email with Reports
       - name: Send Final CI Report via Outlook
         if: success()
-        uses: mattnotmitt/send-email@v1
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.office365.com
           server_port: 587
