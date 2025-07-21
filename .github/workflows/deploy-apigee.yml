@@ -12,6 +12,8 @@ jobs:
     env:
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
       APIGEE_ENV: ${{ secrets.APIGEE_ENV }}
+      JFROG_REPO_USER: ${{ secrets.JFROG_REPO_USER }}
+      JFROG_REPO_PASS: ${{ secrets.JFROG_REPO_PASS }}
 
     steps:
       - name: Checkout code
@@ -150,8 +152,8 @@ jobs:
         working-directory: edge
 
       # Upload artifact (to Maven repository, optional)
-      - name: Upload Artifact
-        run: mvn deploy -q
+      - name: Deploy Maven Artifacts to JFrog
+        run: mvn deploy -s .m2/settings.xml
         working-directory: edge
 
       # Clean up service account file

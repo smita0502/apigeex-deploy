@@ -51,25 +51,36 @@
     <!--</distributionManagement>-->
 
 
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>releases</id>-->
+<!--            <name>apigeex-releases</name>-->
+<!--            <url>${env.NEXUS_REPO_URL}apigee-release/</url>-->
+<!--            &lt;!&ndash;<releases>&ndash;&gt;-->
+<!--            &lt;!&ndash;<enabled>false</enabled>&ndash;&gt;-->
+<!--            &lt;!&ndash;</releases>&ndash;&gt;-->
+<!--            &lt;!&ndash;<snapshots>&ndash;&gt;-->
+<!--            &lt;!&ndash;<enabled>true</enabled>&ndash;&gt;-->
+<!--            &lt;!&ndash;</snapshots>&ndash;&gt;-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>snapshots</id>-->
+<!--            <name>apigeex-snapshots</name>-->
+<!--            <url>${env.NEXUS_REPO_URL}apigee-snapshot/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
     <distributionManagement>
         <repository>
-            <id>releases</id>
-            <name>apigeex-releases</name>
-            <url>${env.NEXUS_REPO_URL}apigee-release/</url>
-            <!--<releases>-->
-            <!--<enabled>false</enabled>-->
-            <!--</releases>-->
-            <!--<snapshots>-->
-            <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
+            <id>sidgs-jfrog-releases</id>
+            <name>SIDGS JFrog Releases</name>
+            <url>https://sidgs.jfrog.io/artifactory/sidgs-maven-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>apigeex-snapshots</name>
-            <url>${env.NEXUS_REPO_URL}apigee-snapshot/</url>
+            <id>sidgs-jfrog-snapshots</id>
+            <name>SIDGS JFrog Snapshots</name>
+            <url>https://sidgs.jfrog.io/artifactory/sidgs-maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
     <profiles>
 
