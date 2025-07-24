@@ -8,6 +8,7 @@ on:
       - 'feature/*'
       - develop
       - 'release/*'
+      - main
   pull_request:
     branches:
       - develop
@@ -43,7 +44,7 @@ jobs:
     name: CI Checks (Lint & Unit Tests)
     needs: common-setup
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/feature/')
+    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/main'
     steps:
       - name: Run Tests and Coverage
         run: |
@@ -72,15 +73,23 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to Apigee Dev
-    needs: common-setup
+    needs: ci-checks
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_DEV }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
-      - name: Clean & Build
-        run: mvn clean package -q -Papigeex-apiproxy
+      - name: Pre-deploy Prep
+        run: |
+          echo "Preparing configuration for Apigee Dev deployment"
+          mvn -q apigee-config:targetservers -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update \
+            -Dapigee.config.dir=resources/edge
         working-directory: edge
 
       - name: Deploy to Apigee Dev
@@ -93,17 +102,55 @@ jobs:
             -Dapigee.config.options=update
         working-directory: edge
 
+      - name: Post-deploy Setup
+        run: |
+          if [ -f resources/edge/org/apiProducts.json ]; then
+            mvn -q apigee-config:apiproducts -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developers.json ]; then
+            mvn -q apigee-config:developers -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developerApps.json ]; then
+            mvn -q apigee-config:apps -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+            mvn -q apigee-config:exportAppKeys -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+        working-directory: edge
+
+      - name: Upload Deployment Artifact
+        run: mvn deploy -s ../.m2/cicd-settings.xml
+        working-directory: edge
+
   deploy-to-stage:
     name: Deploy to Apigee Staging
-    needs: common-setup
+    needs: ci-checks
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/heads/release/')
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_STAGE }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
-      - name: Clean & Build
-        run: mvn clean package -q -Papigeex-apiproxy
+      - name: Pre-deploy Prep
+        run: |
+          echo "Preparing configuration for Apigee Staging deployment"
+          mvn -q apigee-config:targetservers -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update \
+            -Dapigee.config.dir=resources/edge
         working-directory: edge
 
       - name: Deploy to Staging
@@ -116,17 +163,55 @@ jobs:
             -Dapigee.config.options=update
         working-directory: edge
 
+      - name: Post-deploy Setup
+        run: |
+          if [ -f resources/edge/org/apiProducts.json ]; then
+            mvn -q apigee-config:apiproducts -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developers.json ]; then
+            mvn -q apigee-config:developers -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developerApps.json ]; then
+            mvn -q apigee-config:apps -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+            mvn -q apigee-config:exportAppKeys -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+        working-directory: edge
+
+      - name: Upload Deployment Artifact
+        run: mvn deploy -s ../.m2/cicd-settings.xml
+        working-directory: edge
+
   deploy-to-prod:
     name: Deploy to Apigee Prod
-    needs: common-setup
+    needs: ci-checks
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_PROD }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
-      - name: Clean & Build
-        run: mvn clean package -q -Papigeex-apiproxy
+      - name: Pre-deploy Prep
+        run: |
+          echo "Preparing configuration for Apigee Prod deployment"
+          mvn -q apigee-config:targetservers -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update \
+            -Dapigee.config.dir=resources/edge
         working-directory: edge
 
       - name: Deploy to Production
@@ -137,4 +222,34 @@ jobs:
             -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
             -Dhosturl=https://apigee.googleapis.com \
             -Dapigee.config.options=update
+        working-directory: edge
+
+      - name: Post-deploy Setup
+        run: |
+          if [ -f resources/edge/org/apiProducts.json ]; then
+            mvn -q apigee-config:apiproducts -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developers.json ]; then
+            mvn -q apigee-config:developers -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+          if [ -f resources/edge/org/developerApps.json ]; then
+            mvn -q apigee-config:apps -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+            mvn -q apigee-config:exportAppKeys -Papigeex-apiproxy \
+              -Dorg=${{ env.APIGEE_ORG }} -Denv=${{ env.APIGEE_ENV }} \
+              -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+              -Dapigee.config.options=update
+          fi
+        working-directory: edge
+
+      - name: Upload Deployment Artifact
+        run: mvn deploy -s ../.m2/cicd-settings.xml
         working-directory: edge
