@@ -105,6 +105,10 @@ jobs:
       - name: Decode Service Account
         run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
 
+      - name: Build Proxy Bundle
+        run: mvn package -q -Papigeex-apiproxy
+        working-directory: edge
+
       - name: Pre-deploy Prep
         run: |
           echo "Preparing configuration for Apigee Dev deployment"
@@ -178,6 +182,10 @@ jobs:
       - name: Decode Service Account
         run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
 
+      - name: Build Proxy Bundle
+        run: mvn package -q -Papigeex-apiproxy
+        working-directory: edge
+
       - name: Pre-deploy Prep
         run: |
           echo "Preparing configuration for Apigee Staging deployment"
@@ -250,6 +258,10 @@ jobs:
 
       - name: Decode Service Account
         run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+
+      - name: Build Proxy Bundle
+        run: mvn package -q -Papigeex-apiproxy
+        working-directory: edge
 
       - name: Pre-deploy Prep
         run: |
