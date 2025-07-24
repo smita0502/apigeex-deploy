@@ -3,20 +3,24 @@ name: Branch Management Pipeline
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: 'Action to perform (feature | release | close)'
+        required: true
+        default: 'feature'
       feature_branch:
-        description: 'Name of the feature branch (e.g., feature/login-api)'
-        required: true
+        description: 'Feature branch name (e.g., feature/login-api)'
+        required: false
       release_version:
-        description: 'Version number for release (e.g., 1.0.0)'
-        required: true
+        description: 'Release version (e.g., 1.0.0)'
+        required: false
 
 jobs:
   manage-branches:
-    name: Manage Branch Lifecycle
+    name: Branch Manager
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
 
       - name: Configure Git
@@ -24,13 +28,16 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
 
+      # ---------- FEATURE BRANCH ----------
       - name: Create and Push Feature Branch
+        if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
         run: |
           git fetch origin develop
           git checkout -b ${{ github.event.inputs.feature_branch }} origin/develop
           git push origin ${{ github.event.inputs.feature_branch }}
 
-      - name: Create Pull Request to Develop
+      - name: Create PR to Develop
+        if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,24 +46,30 @@ jobs:
           base: develop
           head: ${{ github.event.inputs.feature_branch }}
 
+      # ---------- RELEASE BRANCH ----------
       - name: Create Release Branch
+        if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
         run: |
           git fetch origin develop
           git checkout -b release/${{ github.event.inputs.release_version }} origin/develop
           git push origin release/${{ github.event.inputs.release_version }}
 
-      - name: Create Release Candidate Tag
+      - name: Create RC Tag
+        if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
         run: |
           git tag v${{ github.event.inputs.release_version }}-rc1
           git push origin v${{ github.event.inputs.release_version }}-rc1
 
-      - name: Merge Release Branch to Master
+      # ---------- CLOSE RELEASE BRANCH ----------
+      - name: Merge Release to Main
+        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
         run: |
           git fetch origin
           git checkout master
           git merge origin/release/${{ github.event.inputs.release_version }} --no-edit
           git push origin master
 
-      - name: Delete Release Branch (Close Release)
+      - name: Delete Release Branch
+        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
         run: |
           git push origin --delete release/${{ github.event.inputs.release_version }}
