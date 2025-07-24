@@ -46,10 +46,20 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Run Tests and Coverage
         run: |
           npm install
+          echo "🔁 Running Mocha Tests with NYC for HTML coverage..."
           npx nyc --reporter=html --report-dir=target/unit-test-coverage-html mocha test/unit/*.js
+          echo "✅ Coverage HTML generated at target/unit-test-coverage-html"
         working-directory: edge
 
       - name: Run ApigeeLint
