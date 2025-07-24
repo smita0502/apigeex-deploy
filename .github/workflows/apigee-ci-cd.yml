@@ -70,6 +70,7 @@ jobs:
         with:
           name: apigee-lint-and-coverage
           path: edge/target/combined-report.zip
+    working-directory: edge
 
   deploy-to-dev:
     name: Deploy to Apigee Dev
