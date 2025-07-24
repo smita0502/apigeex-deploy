@@ -6,13 +6,16 @@ on:
   push:
     branches:
       - 'feature/*'
+      - 'feature-*'
       - develop
       - 'release/*'
+      - 'release-*'
       - main
   pull_request:
     branches:
       - develop
       - 'release/*'
+      - 'release-*'
       - main
 
 jobs:
