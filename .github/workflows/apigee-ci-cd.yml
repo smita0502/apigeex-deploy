@@ -93,6 +93,18 @@ jobs:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_DEV }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Decode Service Account
+        run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+
       - name: Pre-deploy Prep
         run: |
           echo "Preparing configuration for Apigee Dev deployment"
@@ -154,6 +166,18 @@ jobs:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_STAGE }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Decode Service Account
+        run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+
       - name: Pre-deploy Prep
         run: |
           echo "Preparing configuration for Apigee Staging deployment"
@@ -215,9 +239,21 @@ jobs:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_PROD }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Decode Service Account
+        run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+
       - name: Pre-deploy Prep
         run: |
-          echo "Preparing configuration for Apigee Prod deployment"
+          echo "Preparing configuration for Apigee Production deployment"
           mvn -q apigee-config:targetservers -Papigeex-apiproxy \
             -Dorg=${{ env.APIGEE_ORG }} \
             -Denv=${{ env.APIGEE_ENV }} \
