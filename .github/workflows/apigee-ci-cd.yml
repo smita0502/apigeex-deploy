@@ -1,0 +1,140 @@
+# File: .github/workflows/apigee-deploy.yaml
+
+name: Apigee CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - develop
+      - 'release/*'
+  pull_request:
+    branches:
+      - develop
+      - 'release/*'
+      - main
+
+jobs:
+
+  common-setup:
+    name: Shared Setup
+    runs-on: ubuntu-latest
+    outputs:
+      proxy-dir: edge
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Decode Service Account
+        run: echo "${{ secrets.APIGEE_SA_BASE64 }}" | base64 --decode > /tmp/apigee-sa.json
+
+  ci-checks:
+    name: CI Checks (Lint & Unit Tests)
+    needs: common-setup
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/feature/')
+    steps:
+      - name: Run Tests and Coverage
+        run: |
+          npm install
+          npx nyc --reporter=html --report-dir=target/unit-test-coverage-html mocha test/unit/*.js
+        working-directory: edge
+
+      - name: Run ApigeeLint
+        run: |
+          npm install -g apigeelint
+          mkdir -p edge/target/apigeelint-report
+          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
+
+      - name: Package Combined Report
+        run: |
+          mkdir -p edge/target/email-report
+          cp -r edge/target/apigeelint-report edge/target/email-report/ || echo "⚠️ Missing ApigeeLint"
+          cp -r edge/target/unit-test-coverage-html edge/target/email-report/ || echo "⚠️ Missing Coverage"
+          cd edge/target && zip -r combined-report.zip email-report
+
+      - name: Upload Combined Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: apigee-lint-and-coverage
+          path: edge/target/combined-report.zip
+
+  deploy-to-dev:
+    name: Deploy to Apigee Dev
+    needs: common-setup
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    env:
+      APIGEE_ENV: ${{ secrets.APIGEE_ENV_DEV }}
+      APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+    steps:
+      - name: Clean & Build
+        run: mvn clean package -q -Papigeex-apiproxy
+        working-directory: edge
+
+      - name: Deploy to Apigee Dev
+        run: |
+          mvn -q io.apigee.build-tools.enterprise4g:apigee-edge-maven-plugin:2.1.0:deploy -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update
+        working-directory: edge
+
+  deploy-to-stage:
+    name: Deploy to Apigee Staging
+    needs: common-setup
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/release/')
+    env:
+      APIGEE_ENV: ${{ secrets.APIGEE_ENV_STAGE }}
+      APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+    steps:
+      - name: Clean & Build
+        run: mvn clean package -q -Papigeex-apiproxy
+        working-directory: edge
+
+      - name: Deploy to Staging
+        run: |
+          mvn -q io.apigee.build-tools.enterprise4g:apigee-edge-maven-plugin:2.1.0:deploy -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update
+        working-directory: edge
+
+  deploy-to-prod:
+    name: Deploy to Apigee Prod
+    needs: common-setup
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    env:
+      APIGEE_ENV: ${{ secrets.APIGEE_ENV_PROD }}
+      APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+    steps:
+      - name: Clean & Build
+        run: mvn clean package -q -Papigeex-apiproxy
+        working-directory: edge
+
+      - name: Deploy to Production
+        run: |
+          mvn -q io.apigee.build-tools.enterprise4g:apigee-edge-maven-plugin:2.1.0:deploy -Papigeex-apiproxy \
+            -Dorg=${{ env.APIGEE_ORG }} \
+            -Denv=${{ env.APIGEE_ENV }} \
+            -Dapigee.serviceaccount.file=/tmp/apigee-sa.json \
+            -Dhosturl=https://apigee.googleapis.com \
+            -Dapigee.config.options=update
+        working-directory: edge

@@ -1,0 +1,62 @@
+name: Branch Management Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature_branch:
+        description: 'Name of the feature branch (e.g., feature/login-api)'
+        required: true
+      release_version:
+        description: 'Version number for release (e.g., 1.0.0)'
+        required: true
+
+jobs:
+  manage-branches:
+    name: Manage Branch Lifecycle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Create and Push Feature Branch
+        run: |
+          git fetch origin develop
+          git checkout -b ${{ github.event.inputs.feature_branch }} origin/develop
+          git push origin ${{ github.event.inputs.feature_branch }}
+
+      - name: Create Pull Request to Develop
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Merge ${{ github.event.inputs.feature_branch }} to develop"
+          body: "Automated PR from feature to develop"
+          base: develop
+          head: ${{ github.event.inputs.feature_branch }}
+
+      - name: Create Release Branch
+        run: |
+          git fetch origin develop
+          git checkout -b release/${{ github.event.inputs.release_version }} origin/develop
+          git push origin release/${{ github.event.inputs.release_version }}
+
+      - name: Create Release Candidate Tag
+        run: |
+          git tag v${{ github.event.inputs.release_version }}-rc1
+          git push origin v${{ github.event.inputs.release_version }}-rc1
+
+      - name: Merge Release Branch to Master
+        run: |
+          git fetch origin
+          git checkout master
+          git merge origin/release/${{ github.event.inputs.release_version }} --no-edit
+          git push origin master
+
+      - name: Delete Release Branch (Close Release)
+        run: |
+          git push origin --delete release/${{ github.event.inputs.release_version }}
