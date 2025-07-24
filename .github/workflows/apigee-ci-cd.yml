@@ -55,22 +55,24 @@ jobs:
       - name: Run ApigeeLint
         run: |
           npm install -g apigeelint
-          mkdir -p edge/target/apigeelint-report
-          apigeelint -s edge/apiproxy -f html.js > edge/target/apigeelint-report/index.html || true
+          mkdir -p target/apigeelint-report
+          apigeelint -s apiproxy -f html.js > target/apigeelint-report/index.html || true
+        working-directory: edge
 
       - name: Package Combined Report
         run: |
-          mkdir -p edge/target/email-report
-          cp -r edge/target/apigeelint-report edge/target/email-report/ || echo "⚠️ Missing ApigeeLint"
-          cp -r edge/target/unit-test-coverage-html edge/target/email-report/ || echo "⚠️ Missing Coverage"
-          cd edge/target && zip -r combined-report.zip email-report
+          mkdir -p target/email-report
+          cp -r target/apigeelint-report target/email-report/ || echo "⚠️ Missing ApigeeLint"
+          cp -r target/unit-test-coverage-html target/email-report/ || echo "⚠️ Missing Coverage"
+          cd target && zip -r combined-report.zip email-report
+        working-directory: edge
 
       - name: Upload Combined Report
         uses: actions/upload-artifact@v4
         with:
           name: apigee-lint-and-coverage
           path: edge/target/combined-report.zip
-    working-directory: edge
+
 
   deploy-to-dev:
     name: Deploy to Apigee Dev
