@@ -47,7 +47,7 @@ jobs:
     name: CI Checks (Lint & Unit Tests)
     needs: common-setup
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/main'
+    if: startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/release-') || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -170,7 +170,7 @@ jobs:
     name: Deploy to Apigee Staging
     needs: ci-checks
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/release/')
+    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/release-')
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_STAGE }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
