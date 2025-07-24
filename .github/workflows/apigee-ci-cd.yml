@@ -92,6 +92,8 @@ jobs:
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_DEV }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+      JFROG_REPO_USER: ${{ secrets.JFROG_REPO_USER }}
+      JFROG_REPO_PASS: ${{ secrets.JFROG_REPO_PASS }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -169,6 +171,8 @@ jobs:
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_STAGE }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+      JFROG_REPO_USER: ${{ secrets.JFROG_REPO_USER }}
+      JFROG_REPO_PASS: ${{ secrets.JFROG_REPO_PASS }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -246,6 +250,8 @@ jobs:
     env:
       APIGEE_ENV: ${{ secrets.APIGEE_ENV_PROD }}
       APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
+      JFROG_REPO_USER: ${{ secrets.JFROG_REPO_USER }}
+      JFROG_REPO_PASS: ${{ secrets.JFROG_REPO_PASS }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
