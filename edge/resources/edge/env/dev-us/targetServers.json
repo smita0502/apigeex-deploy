@@ -4,5 +4,11 @@
     "isEnabled": true,
     "name": "mockTarget",
     "port": 443
+  },
+  {
+    "host": "sidgs-central-apigeex-eval.apigee.net",
+    "isEnabled": true,
+    "name": "mockTarget-test1",
+    "port": 443
   }
 ]
