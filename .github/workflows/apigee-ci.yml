@@ -1,6 +1,6 @@
 # File: .github/workflows/apigee-deploy.yaml
 
-name: Apigee CI/CD Pipeline
+name: Apigee CI Pipeline
 
 on:
   push:
