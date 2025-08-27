@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Action to perform (feature | release | close)'
+        description: 'Action to perform (feature | pr | close_feature | release | close_release)'
         required: true
         default: 'feature'
       feature_branch:
@@ -24,56 +24,228 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout Repo (full history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
 
-      # ---------- FEATURE BRANCH ----------
+      # ---------- FEATURE ----------
       - name: Create and Push Feature Branch
         if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
+        env:
+          FB: ${{ github.event.inputs.feature_branch }}
         run: |
-          git fetch origin develop
-          git checkout -b ${{ github.event.inputs.feature_branch }} origin/develop
-          git push origin ${{ github.event.inputs.feature_branch }}
+          set -e
+          git fetch origin
+          # Ensure develop is up-to-date locally
+          if git show-ref --verify --quiet refs/heads/develop; then
+            git checkout develop && git reset --hard origin/develop
+          elses
+            git checkout -b develop origin/develop
+          fi
+          # Create feature branch only if missing on origin
+          if git ls-remote --heads origin "$FB" | grep -q "$FB"; then
+            echo "Feature branch '$FB' already exists on origin."
+          else
+            git checkout -b "$FB" develop
+            git push -u origin "$FB"
+          fi
 
+      # ---------- PR (feature -> develop) ----------
       - name: Create PR to Develop
-        if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Merge ${{ github.event.inputs.feature_branch }} to develop"
-          body: "Automated PR from feature to develop"
-          base: develop
-          head: ${{ github.event.inputs.feature_branch }}
+        if: ${{ github.event.inputs.mode == 'pr' && github.event.inputs.feature_branch != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FB: ${{ github.event.inputs.feature_branch }}
+        run: |
+          set -e
+          gh pr create \
+            --base develop \
+            --head "$FB" \
+            --title "Merge ${FB} to develop" \
+            --body "Automated PR from ${FB} to develop" || \
+          echo "PR may already exist or nothing to compare."
 
-      # ---------- RELEASE BRANCH ----------
+      # ---------- CLOSE FEATURE (merge PR -> develop & delete branch) ----------
+      - name: Merge Feature PR and Delete Branch
+        if: ${{ github.event.inputs.mode == 'close_feature' && github.event.inputs.feature_branch != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FB: ${{ github.event.inputs.feature_branch }}
+        run: |
+          set -e
+          # Try to find an open PR from FB -> develop
+          PR_NUMBER=$(gh pr list --head "$FB" --base develop --state open --json number --jq '.[0].number' || true)
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR from $FB to develop. Attempting to create one..."
+            gh pr create --base develop --head "$FB" --title "Merge $FB to develop" --body "Auto-created for close_feature" || true
+            PR_NUMBER=$(gh pr list --head "$FB" --base develop --state open --json number --jq '.[0].number' || true)
+          fi
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Merging PR #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --merge --delete-branch
+          else
+            echo "No PR available; performing manual merge."
+            git fetch origin
+            git checkout -B develop origin/develop
+            git merge --no-ff "origin/$FB" -m "Merge $FB into develop"
+            git push origin develop
+            git push origin --delete "$FB" || true
+          fi
+
+      # ---------- RELEASE ----------
       - name: Create Release Branch
         if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
+        env:
+          RV: ${{ github.event.inputs.release_version }}
         run: |
-          git fetch origin develop
-          git checkout -b release/${{ github.event.inputs.release_version }} origin/develop
-          git push origin release/${{ github.event.inputs.release_version }}
+          set -e
+          git fetch origin
+          git checkout -B develop origin/develop
+          if git ls-remote --heads origin "release/${RV}" | grep -q "release/${RV}"; then
+            echo "release/${RV} already exists on origin."
+            git checkout -B "release/${RV}" "origin/release/${RV}"
+          else
+            git checkout -b "release/${RV}"
+            git push -u origin "release/${RV}"
+          fi
 
       - name: Create RC Tag
         if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
+        env:
+          RV: ${{ github.event.inputs.release_version }}
         run: |
-          git tag v${{ github.event.inputs.release_version }}-rc1
-          git push origin v${{ github.event.inputs.release_version }}-rc1
+          set -e
+          git fetch --tags origin
+          git checkout "release/${RV}"
+          if git rev-parse "v${RV}-rc1" >/dev/null 2>&1; then
+            echo "Tag v${RV}-rc1 already exists. Skipping."
+          else
+            git tag -a "v${RV}-rc1" -m "Release candidate v${RV}-rc1"
+            git push origin "v${RV}-rc1"
+          fi
 
-      # ---------- CLOSE RELEASE BRANCH ----------
-      - name: Merge Release to Main
-        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
+      # ---------- CLOSE RELEASE (PR to default branch, merge, delete) ----------
+      - name: Open PR release → default branch and merge
+        if: ${{ github.event.inputs.mode == 'close_release' && github.event.inputs.release_version != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RV: ${{ github.event.inputs.release_version }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          set -e
           git fetch origin
-          git checkout master
-          git merge origin/release/${{ github.event.inputs.release_version }} --no-edit
-          git push origin master
+          REL_BRANCH="release/${RV}"
+          # Ensure release branch exists
+          if ! git ls-remote --heads origin "$REL_BRANCH" | grep -q "$REL_BRANCH"; then
+            echo "Branch ${REL_BRANCH} not found on origin." >&2
+            exit 1
+          fi
+          # Create PR if missing
+          PR_NUMBER=$(gh pr list --head "$REL_BRANCH" --base "$DEFAULT_BRANCH" --state open --json number --jq '.[0].number' || true)
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Opening PR ${REL_BRANCH} -> ${DEFAULT_BRANCH}"
+            gh pr create \
+              --base "$DEFAULT_BRANCH" \
+              --head "$REL_BRANCH" \
+              --title "Merge ${REL_BRANCH} to ${DEFAULT_BRANCH}" \
+              --body "Automated PR to close ${REL_BRANCH} into ${DEFAULT_BRANCH}" || true
+            PR_NUMBER=$(gh pr list --head "$REL_BRANCH" --base "$DEFAULT_BRANCH" --state open --json number --jq '.[0].number' || true)
+          fi
+          # Merge PR (or fallback)
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Merging PR #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --merge --delete-branch
+          else
+            echo "No open PR found; performing manual merge."
+            git checkout -B "$DEFAULT_BRANCH" "origin/$DEFAULT_BRANCH"
+            git merge --no-ff "origin/${REL_BRANCH}" -m "Merge ${REL_BRANCH} into ${DEFAULT_BRANCH}"
+            git push origin "$DEFAULT_BRANCH"
+            git push origin --delete "${REL_BRANCH}" || true
 
-      - name: Delete Release Branch
-        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
-        run: |
-          git push origin --delete release/${{ github.event.inputs.release_version }}
+
+#name: Branch Management Pipeline
+#
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      mode:
+#        description: 'Action to perform (feature | release | close)'
+#        required: true
+#        default: 'feature'
+#      feature_branch:
+#        description: 'Feature branch name (e.g., feature/login-api)'
+#        required: false
+#      release_version:
+#        description: 'Release version (e.g., 1.0.0)'
+#        required: false
+#
+#permissions:
+#  contents: write
+#  pull-requests: write
+#
+#jobs:
+#  manage-branches:
+#    name: Branch Manager
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout Repo
+#        uses: actions/checkout@v4
+#
+#      - name: Configure Git
+#        run: |
+#          git config user.name "GitHub Actions Bot"
+#          git config user.email "actions@github.com"
+#
+#      # ---------- FEATURE BRANCH ----------
+#      - name: Create and Push Feature Branch
+#        if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
+#        run: |
+#          git fetch origin develop
+#          git checkout -b ${{ github.event.inputs.feature_branch }} origin/develop
+#          git push origin ${{ github.event.inputs.feature_branch }}
+#
+#      - name: Create PR to Develop
+#        if: ${{ github.event.inputs.mode == 'feature' && github.event.inputs.feature_branch != '' }}
+#        uses: peter-evans/create-pull-request@v5
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          title: "Merge ${{ github.event.inputs.feature_branch }} to develop"
+#          body: "Automated PR from feature to develop"
+#          base: develop
+#          head: ${{ github.event.inputs.feature_branch }}
+#
+#      # ---------- RELEASE BRANCH ----------
+#      - name: Create Release Branch
+#        if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
+#        run: |
+#          git fetch origin develop
+#          git checkout -b release/${{ github.event.inputs.release_version }} origin/develop
+#          git push origin release/${{ github.event.inputs.release_version }}
+#
+#      - name: Create RC Tag
+#        if: ${{ github.event.inputs.mode == 'release' && github.event.inputs.release_version != '' }}
+#        run: |
+#          git tag v${{ github.event.inputs.release_version }}-rc1
+#          git push origin v${{ github.event.inputs.release_version }}-rc1
+#
+#      # ---------- CLOSE RELEASE BRANCH ----------
+#      - name: Merge Release to Main
+#        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
+#        run: |
+#          git fetch origin
+#          git checkout master
+#          git merge origin/release/${{ github.event.inputs.release_version }} --no-edit
+#          git push origin master
+#
+#      - name: Delete Release Branch
+#        if: ${{ github.event.inputs.mode == 'close' && github.event.inputs.release_version != '' }}
+#        run: |
+#          git push origin --delete release/${{ github.event.inputs.release_version }}
